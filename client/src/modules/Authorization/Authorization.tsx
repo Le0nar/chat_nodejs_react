@@ -1,17 +1,20 @@
-import React, { MouseEvent, useState } from "react";
-import { FC } from "react";
-import { useHistory } from "react-router-dom";
+import React, { MouseEvent, FC } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 
-export const Authorization: FC = () => {
-  const [isSignIn, setIsSignIn] = useState<boolean>(true);
+type AuthorizationProps = {
+  isSignIn: boolean;
+};
+
+export const Authorization: FC<AuthorizationProps> = ({ isSignIn }) => {
   const history = useHistory();
+  const route = useLocation();
 
   const currentPage = isSignIn ? "Sign in" : "Sign up";
   const anotherPage = !isSignIn ? "Sign in" : "Sign up";
 
   const togglePage = (event: MouseEvent<HTMLElement>) => {
     event.preventDefault();
-    setIsSignIn(!isSignIn);
+    route.pathname === "/" ? history.push("/sign-up") : history.push("/");
   };
 
   const confirm = (event: MouseEvent<HTMLElement>) => {
