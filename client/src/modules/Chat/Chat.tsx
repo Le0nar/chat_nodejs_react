@@ -1,5 +1,13 @@
 import { FC } from "react";
+import { useHistory } from "react-router-dom";
 
 export const Chat: FC = () => {
-  return <div>Chat</div>;
+  const history = useHistory();
+
+  const logOut = () => {
+    localStorage.clear();
+    history.push("/")
+  };
+
+  return <button onClick={logOut}>Log out</button>;
 };
