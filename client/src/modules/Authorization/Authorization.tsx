@@ -1,13 +1,24 @@
-import React, { MouseEvent, FC } from "react";
+import axios from "axios";
+import React, { MouseEvent, FC, useState, useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
+import { Authentication } from "../../utils/Authentication";
 
 type AuthorizationProps = {
   isSignIn: boolean;
 };
 
 export const Authorization: FC<AuthorizationProps> = ({ isSignIn }) => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [reapetedPassword, setReapetedPassword] = useState<string>("");
+
   const history = useHistory();
   const route = useLocation();
+
+  const token = localStorage.getItem("token");
+  useEffect(() => {
+    token && history.push("/chat");
+  }, []);
 
   const currentPage = isSignIn ? "Sign in" : "Sign up";
   const anotherPage = !isSignIn ? "Sign in" : "Sign up";
@@ -17,10 +28,15 @@ export const Authorization: FC<AuthorizationProps> = ({ isSignIn }) => {
     route.pathname === "/" ? history.push("/sign-up") : history.push("/");
   };
 
-  const confirm = (event: MouseEvent<HTMLElement>) => {
+  const auth = new Authentication();
+
+  const confirm = async (event: MouseEvent<HTMLElement>) => {
     event.preventDefault();
-    // TODO: add check
-    history.push("/chat");
+
+    const method = isSignIn ? "login" : "registration";
+    const response = await auth[method](email, password);
+
+    response && history.push("/chat");
   };
 
   return (
@@ -28,17 +44,29 @@ export const Authorization: FC<AuthorizationProps> = ({ isSignIn }) => {
       <h1>{currentPage}</h1>
       <form className="auth__form">
         <div className="auth__form__item">
-          <label htmlFor="">input name</label>
-          <input type="email" />
+          <label htmlFor="">Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
         </div>
         <div className="auth__form__item">
-          <label htmlFor="">input name</label>
-          <input type="password" />
+          <label htmlFor="">Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
         </div>
         {currentPage === "Sign up" && (
           <div className="auth__form__item">
-            <label htmlFor="">input name</label>
-            <input type="password" />
+            <label htmlFor="">Repeat password</label>
+            <input
+              type="password"
+              value={reapetedPassword}
+              onChange={(event) => setReapetedPassword(event.target.value)}
+            />
           </div>
         )}
         <div className="">
